@@ -11,21 +11,18 @@ using namespace std;
 
 string tsb(Node* bst) {
     queue<NodeInterface*> readQ; // used to read in the levels of the tree, contains Node*
-    stringstream nodeReader_ss; // used to store the values of the nodes and the level-order sequence
+    stringstream ss; // used to store the values of the nodes and the level-order sequence
     int depth = 0; // the depth of a node on the tree
-
     if (bst == NULL) {
         return "BST is empty\n";
     }
-
     readQ.push(bst); // push the root node of the tree into the queue
-
     while (!readQ.empty()) { // as long as the queue has a remaining node:
         int i = readQ.size(); // store the number of nodes on this level of the tree
-        nodeReader_ss << depth << ":  ";
+        ss << depth << ":  ";
         for (; i > 0; i--) { // for each node on this level,
             NodeInterface* nextNode = readQ.front(); // store the next node in the queue
-            nodeReader_ss << nextNode->getData() << " "; // store the data from the node into the ss
+            ss << nextNode->getData() << " "; // store the data from the node into the ss
             if (nextNode->getLeftChild() != NULL) { // if there is a left child, push the left child into the queue
                 readQ.push(nextNode->getLeftChild());
             }
@@ -34,272 +31,184 @@ string tsb(Node* bst) {
             }
             readQ.pop(); // pop the node off of the queue, leaving its children in the queue
         }
-        nodeReader_ss << "\n"; // push an endl into the ss to distinguish levels
+        ss << "\n"; // push an endl into the ss to distinguish levels
         depth++;
     }
-
-    return nodeReader_ss.str();
+    return ss.str();
 }
 
-
-
-
-
-
-//Please note that the class that implements this interface must be made
-//of objects which implement the NodeInterface
-
-/*
-* Returns the root node for this tree
-*
-* @return the root node for this tree.
-*/
-NodeInterface * AVL::getRootNode() const
-{
+NodeInterface * AVL::getRootNode() const {
 	return root;
 }
 
-/*
-* Attempts to add the given int to the AVL tree
-*
-* @return true if added
-* @return false if unsuccessful (i.e. the int is already in tree)
-*/
-
-
-
-
-bool AVL::add(int data)
-{
-	add_function(root, data);
+bool AVL::add(int data) {
+	addFunction(root, data);
 }
 
-bool AVL::add_function(Node*& n, int value)
-{
-	//cout << "Add_Function adding " << value << endl;
-	if (n == NULL)
-	{
-		n = new Node(value);
-		n->height = 0;
+bool AVL::addFunction(Node*& myNode, int value) {
+	if (myNode == NULL) {
+		myNode = new Node(value);
+		myNode->height = 0;
 		return true;
 	}
-
-	if (n->data == value)
-	{
-		//cout << "Add_Function FALSE FALSE FALSE" << endl;
+	if (myNode->data == value) {
 		return false;
 	}
-
-	if (n->data > value)
-	{
-		//cout << "Add_Function n->data > value" << endl;
-		bool fluff = add_function(n->leftChild, value);
-		if (fluff == true)
-		{
-			if (n->getBalance() > 1)
-				balanceLeft(n);
-			if (n->getBalance() < -1)
-				balanceRight(n);
+	if (myNode->data > value) {
+		bool fluff = addFunction(myNode->leftChild, value);
+		if (fluff == true) {
+			if (myNode->getBalance() > 1) {
+				balanceLeft(myNode);
+      }
+			if (myNode->getBalance() < -1) {
+				balanceRight(myNode);
+      }
 		}
 		return fluff;
 	}
 
-	if (n->data < value)
-	{
-		//cout << "Add_Function n->data < value" << endl;
-		bool fluff2 = add_function(n->rightChild, value);
-		if (fluff2 == true)
-		{
-			if (n->getBalance() > 1)
-				balanceLeft(n);
-			if (n->getBalance() < -1)
-				balanceRight(n);
-
+	if (myNode->data < value) {
+		bool fluff2 = addFunction(myNode->rightChild, value);
+		if (fluff2 == true) {
+			if (myNode->getBalance() > 1) {
+				balanceLeft(myNode);
+      }
+			if (myNode->getBalance() < -1) {
+				balanceRight(myNode);
+      }
 		}
 		return fluff2;
 	}
-	if (n->getBalance() > 1)
-		balanceLeft(n);
-	if (n->getBalance() < -1)
-		balanceRight(n);
+	if (myNode->getBalance() > 1) {
+		balanceLeft(myNode);
+  }
+	if (myNode->getBalance() < -1) {
+		balanceRight(myNode);
+  }
 	return false;
 }
 
-
-
-
-
-/*
-* Attempts to remove the given int from the AVL tree
-*
-* @return true if successfully removed
-* @return false if remove is unsuccessful(i.e. the int is not in the tree)
-*/
-bool AVL::remove(int data)
-{
+bool AVL::remove(int data) {
 		bool fluff5;
-		fluff5 = remove_function(root, data);
+		fluff5 = removeFunction(root, data);
 		balance(root);
 		return fluff5;
-
-
 }
 
-bool AVL::remove_function(Node*& n, int value)
-{
-		//cout << "Remove_Function Removing " << value << endl;
-	if (n == NULL)
-	{
+bool AVL::removeFunction(Node*& myNode, int value) {
+	if (myNode == NULL) {
 		return false;
 	}
-	if (n->data > value)
-	{
-		//cout << "Remove_Function n > value " << value << endl;
-
-		bool fluff3 = remove_function(n->leftChild, value);
-
-		balance(n);
-
+	if (myNode->data > value) {
+		bool fluff3 = removeFunction(myNode->leftChild, value);
+		balance(myNode);
 		return fluff3;
 	}
-	if (n->data < value)
-	{
-		//cout << "Remove_Function n < value " << value << endl;
-
-		bool fluff4 = remove_function(n->rightChild, value);
-
-		balance(n);
-
+	if (myNode->data < value) {
+		bool fluff4 = removeFunction(myNode->rightChild, value);
+		balance(myNode);
 		return fluff4;
 	}
-
-	if (n->rightChild == NULL && n->leftChild == NULL) //No next of kin
-	{
-		//cout << "Remove_Function no children " << value << endl;
-
-		delete n;
-		n = NULL;
+  // no next of kin
+	if (myNode->rightChild == NULL && myNode->leftChild == NULL) {
+		delete myNode;
+		myNode = NULL;
 		return true;
 	}
-
-	if (n->rightChild == NULL || n->leftChild == NULL) //one child
-	{
-		//cout << "Remove_Function one child " << value << endl;
-
+  //one child
+	if (myNode->rightChild == NULL || myNode->leftChild == NULL) {
 		Node* temp;
-		temp = n->leftChild;
-		if (n->leftChild == NULL)
-		{
-			temp = n->rightChild;
+		temp = myNode->leftChild;
+		if (myNode->leftChild == NULL) {
+			temp = myNode->rightChild;
 		}
-		delete n;
-		n = temp;
-		balance(n);
+		delete myNode;
+		myNode = temp;
+		balance(myNode);
 		return true;
 	}
-
-	Node* temp = fosterParent(n->leftChild);
-
-	temp->leftChild = n->leftChild;
-	temp->rightChild = n->rightChild;
-	delete n;
-	n = temp;
+	Node* temp = fosterParent(myNode->leftChild);
+	temp->leftChild = myNode->leftChild;
+	temp->rightChild = myNode->rightChild;
+	delete myNode;
+	myNode = temp;
 	return true;
 }
 
-Node* AVL::fosterParent(Node*& n)
-{
-	if (n->rightChild == NULL)
-	{
-		Node* temp = n;
-		n = n->leftChild;
+Node* AVL::fosterParent(Node*& myNode) {
+	if (myNode->rightChild == NULL) {
+		Node* temp = myNode;
+		myNode = myNode->leftChild;
 		return temp;
 	}
-	Node* temp = fosterParent(n->rightChild);
-	balance(n);
+	Node* temp = fosterParent(myNode->rightChild);
+	balance(myNode);
 	return temp;
 }
 
-/*
-* Removes all nodes from the tree, resulting in an empty tree.
-*/
-void AVL::clear()
-{
-	clear_function(root);
+void AVL::clear() {
+	clearFunction(root);
 	root = NULL;
 }
-void AVL::clear_function(Node*& n)
-{
-	if (n == NULL)
-	{
+
+void AVL::clearFunction(Node*& myNode) {
+	if (myNode == NULL) {
 		return;
 	}
-
-	if (n->leftChild != NULL)
-	{
-		clear_function(n->leftChild);
+	if (myNode->leftChild != NULL) {
+		clearFunction(myNode->leftChild);
 	}
-	if (n->rightChild != NULL)
-	{
-		clear_function(n->rightChild);
+	if (myNode->rightChild != NULL) {
+		clearFunction(myNode->rightChild);
 	}
-	delete n;
+	delete myNode;
 	return;
 }
 
-
-void AVL::balanceRight(Node*& n) //right-right and right-left
-{
-	if (n == NULL)
+void AVL::balanceRight(Node*& myNode) {
+	if (myNode == NULL) {
 		return;
-
-		//cout << "balanceRight" << endl;
-		if (n->leftChild->getBalance() >= 1)
-		{
-			rotateLeft(n->leftChild);
-		}
-		rotateRight(n);
+  }
+	if (myNode->leftChild->getBalance() >= 1) {
+		rotateLeft(myNode->leftChild);
+	}
+	rotateRight(myNode);
 }
 
-void AVL::balanceLeft(Node*& n) //left-left and left-right
-{
-	if (n == NULL)
+void AVL::balanceLeft(Node*& myNode) {
+	if (myNode == NULL) {
 		return;
-	//cout << "balanceLeft" << endl;
-		if (n->rightChild->getBalance() <= -1)
-		{
-			rotateRight(n->rightChild);
-		}
-		rotateLeft(n);
+  }
+	if (myNode->rightChild->getBalance() <= -1) {
+		rotateRight(myNode->rightChild);
+	}
+	rotateLeft(myNode);
 }
 
-
-void AVL::rotateRight(Node*& n)
-{
-	//cout << "rotateRight" << endl;
-	Node* temp = n->leftChild;
-	n->leftChild = temp->rightChild;
-	temp->rightChild = n;
-	n = temp;
+void AVL::rotateRight(Node*& myNode) {
+	Node* temp = myNode->leftChild;
+	myNode->leftChild = temp->rightChild;
+	temp->rightChild = myNode;
+	myNode = temp;
 }
 
-void AVL::rotateLeft(Node*& n)
-{
-	Node* temp = n->rightChild;
-	n->rightChild = temp->leftChild;
-	temp->leftChild = n;
-	n = temp;
+void AVL::rotateLeft(Node*& myNode) {
+	Node* temp = myNode->rightChild;
+	myNode->rightChild = temp->leftChild;
+	temp->leftChild = myNode;
+	myNode = temp;
 }
 
-void AVL::balance(Node*& n)
-{
-	if (n == NULL)
+void AVL::balance(Node*& myNode) {
+	if (myNode == NULL) {
 		return;
-	if (n->getBalance() > 1)
-		balanceLeft(n);
-	else if (n->getBalance() < -1)
-		balanceRight(n);
-
-		balance(n->leftChild);
-		balance(n->rightChild);
+  }
+	if (myNode->getBalance() > 1) {
+		balanceLeft(myNode);
+  }
+	else if (myNode->getBalance() < -1) {
+		balanceRight(myNode);
+  }
+	balance(myNode->leftChild);
+	balance(myNode->rightChild);
 }

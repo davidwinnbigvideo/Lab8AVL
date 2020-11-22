@@ -1,55 +1,30 @@
-
-#pragma once
-
 #include "NodeInterface.h"
-#include "AVLInterface.h"
 #include "Node.h"
+#include "AVLInterface.h"
+#include <string>
+
 using namespace std;
 
 class AVL: public AVLInterface {
 public:
-  Node* root;
-	AVL() {root = NULL;}
-	virtual ~AVL() {}
+		Node * root;
 
-	//Please note that the class that implements this interface must be made
-	//of objects which implement the NodeInterface
+	AVL() {
+		root = NULL;
+	}
+	~AVL() {clear();}
 
-	/*
-	* Returns the root node for this tree
-	*
-	* @return the root node for this tree.
-	*/
 	NodeInterface * getRootNode() const;
-
-	/*
-	* Attempts to add the given int to the AVL tree
-	* Rebalances the tree if data is successfully added
-	*
-	* @return true if added
-	* @return false if unsuccessful (i.e. the int is already in tree)
-	*/
 	bool add(int data);
-  bool add_function(Node*& n, int value);
-
-	/*
-	* Attempts to remove the given int from the AVL tree
-	* Rebalances the tree if data is successfully removed
-	*
-	* @return true if successfully removed
-	* @return false if remove is unsuccessful(i.e. the int is not in the tree)
-	*/
+	bool addFunction(Node*& n, int value);
 	bool remove(int data);
-  bool remove_fuction(Node*& n, int value);
-
-	/*
-	* Removes all nodes from the tree, resulting in an empty tree.
-	*/
+	bool removeFunction(Node*& n, int value);
 	void clear();
-  void clear_function(Node*& n);
-  void balanceRight(Node*& n);
-  void balanceLeft(Node*& n);
-  void rotateRight(Node*& n);
-  void rotateLeft(Node*& n);
-  Node* fosterParent(Node*& n);
+	void clearFunction(Node*& n);
+	void balanceRight(Node*& n);
+	void balanceLeft(Node*& n);
+	void rotateRight(Node*& n);
+	void rotateLeft(Node*& n);
+	void balance(Node*& n);
+	Node* fosterParent(Node*& n);
 };
